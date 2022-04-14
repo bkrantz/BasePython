@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 PYTHON_EXE := env/bin/python
 
-.PHONY: clean deep-clean install-dependencies uninstall-dependencies install install-dev run test distclean build
+.PHONY: clean deep-clean install-dependencies uninstall-dependencies install install-dev run test dist-clean dist-build
 
 clean:
 	rm -rf env
@@ -34,7 +34,7 @@ test:
 	source env/bin/activate \
 		&& pytest
 
-distclean: 
+dist-clean: 
 	rm -rf .pytest_cache
 	rm -rf .git
 	rm -rf .env.sample
@@ -48,4 +48,4 @@ distclean:
 	rm -rf setup.py
 	rm -rf tmp
 
-build: install-dependencies clean install distclean
+dist-build: install-dependencies clean install dist-clean

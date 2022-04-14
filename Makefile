@@ -2,24 +2,21 @@ SHELL := /bin/bash
 
 PYTHON_EXE := env/bin/python
 
-.PHONY: dependencies install-docker clean install install-dev run test build
-
-dependencies:
-	@#sripts to install project dependencies
-	sudo apt-get update
-	sudo apt-get install -y software-properties-common
-	sudo add-apt-repository ppa:deadsnakes/ppa
-	sudo apt-get update
-	sudo apt-get install -y make \
-		python3.7-dev \
-		python3.7-venv \
-		python3-pip \
-		build-essential
+.PHONY: clean deep-clean install-dependencies uninstall-dependencies install install-dev run test distclean build
 
 clean:
 	rm -rf env
 	rm -rf .pytest_cache
 	find . -type d -name  "__pycache__" -exec rm -r {} +
+
+deep-clean: clean
+	rm -rf tmp
+
+install-dependencies:
+	bin/install_dependencies.sh
+
+uninstall-dependencies: clean
+	bin/uninstall_dependencies.sh
 
 install: clean
 	python3.7 -m venv env
@@ -34,9 +31,10 @@ run:
 		&& python src/app.py
 
 test:
-	pytest
+	source env/bin/activate \
+		&& pytest
 
-build: install
+distclean: 
 	rm -rf .pytest_cache
 	rm -rf .git
 	rm -rf .env.sample
@@ -48,3 +46,6 @@ build: install
 	rm -rf requirements.txt
 	rm -rf requirements_dev.txt
 	rm -rf setup.py
+	rm -rf tmp
+
+build: install-dependencies clean install distclean
